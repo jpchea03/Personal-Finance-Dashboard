@@ -1,0 +1,12 @@
+--Personal Finance Dashboard--
+The Personal Finance Dashboard is an interactive tool used to
+track expenses and make budget recommendations.
+
+User Input:
+To use the user input functions, simply call them with no arguments
+then follow the prompts to enter expense information. For each expense entry,
+the program prompts the user first for the name and then for the amount.
+If the expense amount is valid, the expense is saved to a dictionary where
+the keys are the expense names and the values are the amounts. If the amount is invalid,
+an error message is displayed. In any case, after expense is entered, the user is asked if they
+wish to continue. To stop adding expenses, enter the escape code ('n') at this stage.
