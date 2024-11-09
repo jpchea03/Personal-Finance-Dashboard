@@ -1,10 +1,42 @@
+import csv
+
+# Function to save expenses to a CSV file
+def save_expenses_to_csv(expenses, filename):
+    with open(filename, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        # Write headers
+        writer.writerow(["Expense Type", "Name", "Amount"])
+        # Write each expense
+        for expense_type, expense_dict in expenses.items():
+            for name, amount in expense_dict.items():
+                writer.writerow([expense_type, name, amount])
+    print(f"Expenses saved to {filename}")
+
+# Function to load expenses from a CSV file
+def load_expenses_from_csv(filename):
+    expenses = {"weekly": {}, "monthly": {}, "annual": {}}
+    try:
+        with open(filename, mode='r') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header
+            for row in reader:
+                expense_type, name, amount = row
+                expenses[expense_type][name] = float(amount)
+    except FileNotFoundError:
+        print(f"{filename} not found. Returning empty expenses.")
+    return expenses
+
+
+
+
+
 #Prompt user for input for weekly expenses
 def get_weekly_expenses():
     weekly_expenses = dict() #Create new dict to store weekly expenses
     escape_code = 'n'
     user_input = ""
     expense_counter = 1
-    print("*Weekly Expenses*")
+    print("\n*Weekly Expenses*")
 
     #Take input until user types escape code
     while user_input != escape_code:
@@ -36,7 +68,7 @@ def get_monthly_expenses():
     escape_code = 'n'
     user_input = ""
     expense_counter = 1
-    print("*Monthly Expenses*")
+    print("\n*Monthly Expenses*")
 
     #Take input until user types escape code
     while user_input != escape_code:
@@ -67,7 +99,7 @@ def get_annual_expenses():
     escape_code = 'n'
     user_input = ""
     expense_counter = 1
-    print("*Annual Expenses*")
+    print("\n*Annual Expenses*")
 
     #Take input until user types escape code
     while user_input != escape_code:
@@ -94,17 +126,34 @@ def get_annual_expenses():
 
 
 if __name__ == "__main__":
-    #Test weekly
-    weekly_expenses = get_weekly_expenses()
-    print("\n")
-    print(weekly_expenses)
+    # Gather expenses
+    
+    weekly_expenses = dict()
+    monthly_expenses = dict()
+    annual_expenses = dict()
+    
+    user_input = input("Would you like to add expenses? ('w' for weekly, 'm' for monthly, and 'a' for annually, or 'n' for no: ")
+    while user_input == 'w' or user_input == 'm' or user_input == 'a':
+        if (user_input == 'w'):
+            weekly_expenses = get_weekly_expenses()
+        if (user_input == 'm'):
+            monthly_expenses = get_monthly_expenses()
+        if (user_input == 'a'):
+            annual_expenses = get_annual_expenses()
+        user_input = input("Would you like to add expenses? ('w' for weekly, 'm' for monthly, and 'a' for annually, or 'n' for no: ")
 
-    #Test monthly
-    monthly_expenses = get_monthly_expenses()
-    print("\n")
-    print(monthly_expenses)
+    # Combine all expenses into a single dictionary
+    all_expenses = {
+        "weekly": weekly_expenses,
+        "monthly": monthly_expenses,
+        "annual": annual_expenses
+    }
 
-    #Test annual
-    annual_expenses = get_annual_expenses()
-    print("\n")
-    print(annual_expenses)
+    # Save expenses to a CSV file
+    save_expenses_to_csv(all_expenses, 'expenses.csv')
+
+    # Load expenses from the CSV file
+    loaded_expenses = load_expenses_from_csv('expenses.csv')
+    print("\nLoaded expenses:")
+    print(loaded_expenses)
+
