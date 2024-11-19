@@ -1,5 +1,20 @@
 import csv
 
+global weekly_expenses
+global monthly_expenses
+global annual_expenses
+
+global monthlyAllowance
+global monthlySavings
+global monthlyNecessaryExpenses
+
+global userInfoArray
+global annualIncome
+global currentSavings
+global userName
+global userState
+global userJobTitle
+
 # Function to save expenses to a CSV file
 def save_expenses_to_csv(expenses, filename):
     with open(filename, mode='w', newline='') as file:
@@ -27,133 +42,139 @@ def load_expenses_from_csv(filename):
     return expenses
 
 
-
-
-
-#Prompt user for input for weekly expenses
-def get_weekly_expenses():
-    weekly_expenses = dict() #Create new dict to store weekly expenses
+# Unified function to prompt user for expenses based on type
+def set_expenses(expense_type):
+    expenses = dict()  # Create a new dict to store expenses of the given type
     escape_code = 'n'
     user_input = ""
     expense_counter = 1
-    print("\n*Weekly Expenses*")
+    print(f"\n*{expense_type.capitalize()} Expenses*")
 
-    #Take input until user types escape code
+    # Take input until user types escape code
     while user_input != escape_code:
         print(f"\n--Expense {expense_counter}--")
-        print("Enter expense name: ", end="", flush = True)
-        expense_name = input()
-        print(expense_name)
-        print("Enter expense amount: ", end="", flush = True)
-        user_input = input()
-        #Verify that input amount is a float
+        expense_name = input("Enter expense name: ")
+        user_input = input("Enter expense amount: ")
+        # Verify that input amount is a float
         try:
             expense_amount = float(user_input)
-            print(f"${expense_amount:.2f}")
-            weekly_expenses.update({expense_name:expense_amount})
-        except:
-            print("Invalid input")
-        #Check if user wishes to add another expense
-        print("Add another expense? (y/n) ", end="", flush = True) 
-        user_input = input()
+            expenses[expense_name] = expense_amount
+            print(f"Added {expense_name} with amount ${expense_amount:.2f}")
+        except ValueError:
+            print("Invalid input. Please enter a valid number for the expense amount.")
+        
+        # Check if user wishes to add another expense
+        user_input = input("Add another expense? (y/n): ").lower()
         expense_counter += 1
+    return expenses
 
-    #Return weekly expense dictionary
-    return weekly_expenses
+##================================================================
+
+def saveUserInfo(user_info, filename="userInfo.csv"):
+    with open(filename, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        # Write headers
+        writer.writerow(["annualIncome", "currentSavings", "userName", "userState", "userJobTitle"])
+        # Write user information (array format)
+        writer.writerow(user_info)
+    print(f"User information saved to {filename}")
+
+# Function to load user information from a CSV file
+def loadUserInfo(filename="userInfo.csv"):
+    try:
+        with open(filename, mode='r') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header
+            user_info = next(reader)  # Read the first data row
+    except StopIteration:
+        print(f"{filename} is empty. Returning default user information.")
+        user_info = [0.0, 0.0, "", "", ""]  # Default values
+    return user_info
 
 
-#Prompt user for input for monthly expenses
-def get_monthly_expenses():
-    monthly_expenses = dict() #Create new dict to store monthly expenses
-    escape_code = 'n'
-    user_input = ""
-    expense_counter = 1
-    print("\n*Monthly Expenses*")
 
-    #Take input until user types escape code
-    while user_input != escape_code:
-        print(f"\n--Expense {expense_counter}--")
-        print("Enter expense name: ", end="", flush = True)
-        expense_name = input()
-        print(expense_name)
-        print("Enter expense amount: ", end="", flush = True)
-        user_input = input()
-        #Verify that input amount is a float
-        try:
-            expense_amount = float(user_input)
-            print(f"${expense_amount:.2f}")
-            monthly_expenses.update({expense_name:expense_amount})
-        except:
-            print("Invalid input")
-        #Check if user wishes to add another expense
-        print("Add another expense? (y/n) ", end="", flush = True) 
-        user_input = input()
-        expense_counter += 1
 
-    #Return monthly expense dictionary
-    return monthly_expenses
+#==========buttons==========
 
-#Prompt user for input for annual expenses
-def get_annual_expenses():
-    annual_expenses = dict() #Create new dict to store annual expenses
-    escape_code = 'n'
-    user_input = ""
-    expense_counter = 1
-    print("\n*Annual Expenses*")
+def changeUserInfoButton():
+    annualIncome = input("\nAnnual Income: ")
+    currentSavings = input("Current Savings: ")
+    userName = input("Name: ")
+    userState = input("State: ")
+    userJobTitle = input("Job Title: ")
+    userInfoArray = [annualIncome,currentSavings, userName, userState, userJobTitle]
+    #print(userInfoArray)
+    return userInfoArray
+def addWeeklyExpensesButton():
+    weekly_expenses = set_expenses("weekly")
+    return
+def addMonthlyExpensesButton():
+    monthly_expenses = set_expenses("monthly")
+    return
+def addAnnualExpensesButton():
+    annual_expenses = set_expenses("annual")
+    return
+def showVisualizationButton():
+    return
+def makeFinancialSuggestionButton():
+    return
+def printInfo():
+    print("\nLoaded expenses:")
+    #print(load_expenses_from_csv('expenses.csv'))
+    print(userInfoArray)
+    #print(userName)
+    print(weekly_expenses, monthly_expenses, annual_expenses)
+    return
 
-    #Take input until user types escape code
-    while user_input != escape_code:
-        print(f"\n--Expense {expense_counter}--")
-        print("Enter expense name: ", end="", flush = True)
-        expense_name = input()
-        print(expense_name)
-        print("Enter expense amount: ", end="", flush = True)
-        user_input = input()
-        #Verify that input amount is a float
-        try:
-            expense_amount = float(user_input)
-            print(f"${expense_amount:.2f}")
-            annual_expenses.update({expense_name:expense_amount})
-        except:
-            print("Invalid input")
-        #Check if user wishes to add another expense
-        print("Add another expense? (y/n) ", end="", flush = True) 
-        user_input = input()
-        expense_counter += 1
-
-    #Return weekly expense dictionary
-    return annual_expenses
 
 
 if __name__ == "__main__":
-    # Gather expenses
+   
+    weekly_expenses, monthly_expenses, annual_expenses = load_expenses_from_csv('expenses.csv').values()
+    userInfoArray = loadUserInfo()
     
-    weekly_expenses = dict()
-    monthly_expenses = dict()
-    annual_expenses = dict()
-    
-    user_input = input("Would you like to add expenses? ('w' for weekly, 'm' for monthly, and 'a' for annually, or 'n' for no: ")
-    while user_input == 'w' or user_input == 'm' or user_input == 'a':
-        if (user_input == 'w'):
-            weekly_expenses = get_weekly_expenses()
-        if (user_input == 'm'):
-            monthly_expenses = get_monthly_expenses()
-        if (user_input == 'a'):
-            annual_expenses = get_annual_expenses()
-        user_input = input("Would you like to add expenses? ('w' for weekly, 'm' for monthly, and 'a' for annually, or 'n' for no: ")
 
-    # Combine all expenses into a single dictionary
+    while True:
+        print("\nTHIS IS THE CURRENT UI HOME PAGE. PLEASE SELECT A BUTTON\n-----------------------------")
+        print("Change User Info: U")
+        print("Add Weekly Expenses: W")
+        print("Add Monthly Expenses: M")
+        print("Add Annual Expenses: A")
+        #print("Show Visualization: V")
+        #print("Make Suggestion: S")
+        #print("Quit Program: Q")
+        print("Print Info: P")
+        user_input = input("\nUser Input: ").lower()
+        if user_input=='u':
+            userInfoArray = changeUserInfoButton()
+        elif user_input=='w':
+            addWeeklyExpensesButton()
+        elif user_input=='m':
+            addMonthlyExpensesButton()
+        elif user_input=='a':
+            addAnnualExpensesButton()
+        elif user_input=='v':
+            showVisualizationButton()
+        elif user_input=='s':
+            makeFinancialSuggestionButton()
+        elif user_input=='p':
+            printInfo()
+        else: break
+    
+
+
+
+    # save user info to csv
+    saveUserInfo(userInfoArray)
+
+    # Combine all expenses into a single dictionary and saves to csv file
     all_expenses = {
         "weekly": weekly_expenses,
         "monthly": monthly_expenses,
         "annual": annual_expenses
     }
-
-    # Save expenses to a CSV file
     save_expenses_to_csv(all_expenses, 'expenses.csv')
+    
 
-    # Load expenses from the CSV file
-    loaded_expenses = load_expenses_from_csv('expenses.csv')
-    print("\nLoaded expenses:")
-    print(loaded_expenses)
+
 

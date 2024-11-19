@@ -1,5 +1,7 @@
 Expense Type,Name,Amount
-weekly,apples,5.0
-weekly,corn,15.0
-weekly,groceries,72.0
-monthly,gas,103.0
+weekly,Gas,42.0
+weekly,Food,97.98
+weekly,Entertainment,13.0
+monthly,Rent,768.0
+monthly,Utilities,119.08
+annual,Insureanc,766.09
