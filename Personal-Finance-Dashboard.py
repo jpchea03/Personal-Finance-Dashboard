@@ -1,4 +1,9 @@
+# Imports
 import csv
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit
+import UI
+
 
 # Function to save expenses to a CSV file
 def save_expenses_to_csv(expenses, filename):
@@ -26,134 +31,103 @@ def load_expenses_from_csv(filename):
         print(f"{filename} not found. Returning empty expenses.")
     return expenses
 
-
-
-
-
-#Prompt user for input for weekly expenses
+# Prompt user for input for weekly expenses
 def get_weekly_expenses():
-    weekly_expenses = dict() #Create new dict to store weekly expenses
+    weekly_expenses = dict()  # Create new dict to store weekly expenses
     escape_code = 'n'
     user_input = ""
     expense_counter = 1
     print("\n*Weekly Expenses*")
 
-    #Take input until user types escape code
+    # Take input until user types escape code
     while user_input != escape_code:
         print(f"\n--Expense {expense_counter}--")
-        print("Enter expense name: ", end="", flush = True)
+        print("Enter expense name: ", end="", flush=True)
         expense_name = input()
         print(expense_name)
-        print("Enter expense amount: ", end="", flush = True)
+        print("Enter expense amount: ", end="", flush=True)
         user_input = input()
-        #Verify that input amount is a float
+        # Verify that input amount is a float
         try:
             expense_amount = float(user_input)
             print(f"${expense_amount:.2f}")
-            weekly_expenses.update({expense_name:expense_amount})
+            weekly_expenses.update({expense_name: expense_amount})
         except:
             print("Invalid input")
-        #Check if user wishes to add another expense
-        print("Add another expense? (y/n) ", end="", flush = True) 
+        # Check if user wishes to add another expense
+        print("Add another expense? (y/n) ", end="", flush=True)
         user_input = input()
         expense_counter += 1
 
-    #Return weekly expense dictionary
+    # Return weekly expense dictionary
     return weekly_expenses
 
-
-#Prompt user for input for monthly expenses
+# Prompt user for input for monthly expenses
 def get_monthly_expenses():
-    monthly_expenses = dict() #Create new dict to store monthly expenses
+    monthly_expenses = dict()  # Create new dict to store monthly expenses
     escape_code = 'n'
     user_input = ""
     expense_counter = 1
     print("\n*Monthly Expenses*")
 
-    #Take input until user types escape code
+    # Take input until user types escape code
     while user_input != escape_code:
         print(f"\n--Expense {expense_counter}--")
-        print("Enter expense name: ", end="", flush = True)
+        print("Enter expense name: ", end="", flush=True)
         expense_name = input()
         print(expense_name)
-        print("Enter expense amount: ", end="", flush = True)
+        print("Enter expense amount: ", end="", flush=True)
         user_input = input()
-        #Verify that input amount is a float
+        # Verify that input amount is a float
         try:
             expense_amount = float(user_input)
             print(f"${expense_amount:.2f}")
-            monthly_expenses.update({expense_name:expense_amount})
+            monthly_expenses.update({expense_name: expense_amount})
         except:
             print("Invalid input")
-        #Check if user wishes to add another expense
-        print("Add another expense? (y/n) ", end="", flush = True) 
+        # Check if user wishes to add another expense
+        print("Add another expense? (y/n) ", end="", flush=True)
         user_input = input()
         expense_counter += 1
 
-    #Return monthly expense dictionary
+    # Return monthly expense dictionary
     return monthly_expenses
 
-#Prompt user for input for annual expenses
+# Prompt user for input for annual expenses
 def get_annual_expenses():
-    annual_expenses = dict() #Create new dict to store annual expenses
+    annual_expenses = dict()  # Create new dict to store annual expenses
     escape_code = 'n'
     user_input = ""
     expense_counter = 1
     print("\n*Annual Expenses*")
 
-    #Take input until user types escape code
+    # Take input until user types escape code
     while user_input != escape_code:
         print(f"\n--Expense {expense_counter}--")
-        print("Enter expense name: ", end="", flush = True)
+        print("Enter expense name: ", end="", flush=True)
         expense_name = input()
         print(expense_name)
-        print("Enter expense amount: ", end="", flush = True)
+        print("Enter expense amount: ", end="", flush=True)
         user_input = input()
-        #Verify that input amount is a float
+        # Verify that input amount is a float
         try:
             expense_amount = float(user_input)
             print(f"${expense_amount:.2f}")
-            annual_expenses.update({expense_name:expense_amount})
+            annual_expenses.update({expense_name: expense_amount})
         except:
             print("Invalid input")
-        #Check if user wishes to add another expense
-        print("Add another expense? (y/n) ", end="", flush = True) 
+        # Check if user wishes to add another expense
+        print("Add another expense? (y/n) ", end="", flush=True)
         user_input = input()
         expense_counter += 1
 
-    #Return weekly expense dictionary
+    # Return annual expense dictionary
     return annual_expenses
 
 
 if __name__ == "__main__":
-    # Gather expenses
-    
-    weekly_expenses = dict()
-    monthly_expenses = dict()
-    annual_expenses = dict()
-    
-    user_input = input("Would you like to add expenses? ('w' for weekly, 'm' for monthly, and 'a' for annually, or 'n' for no: ")
-    while user_input == 'w' or user_input == 'm' or user_input == 'a':
-        if (user_input == 'w'):
-            weekly_expenses = get_weekly_expenses()
-        if (user_input == 'm'):
-            monthly_expenses = get_monthly_expenses()
-        if (user_input == 'a'):
-            annual_expenses = get_annual_expenses()
-        user_input = input("Would you like to add expenses? ('w' for weekly, 'm' for monthly, and 'a' for annually, or 'n' for no: ")
-
-    # Combine all expenses into a single dictionary
-    all_expenses = {
-        "weekly": weekly_expenses,
-        "monthly": monthly_expenses,
-        "annual": annual_expenses
-    }
-
-    # Save expenses to a CSV file
-    save_expenses_to_csv(all_expenses, 'expenses.csv')
-
-    # Load expenses from the CSV file
-    loaded_expenses = load_expenses_from_csv('expenses.csv')
-    print("\nLoaded expenses:")
-    print(loaded_expenses)
-
+    # Main loop
+    app = QApplication([])
+    window = UI.PersonalFinanceDashboard()
+    window.show()
+    app.exec()

@@ -2,6 +2,9 @@
 The Personal Finance Dashboard is an interactive tool used to
 track expenses and make budget recommendations.
 
+Dependencies:
+PyQT6
+
 User Input:
 To use the user input functions, simply call them with no arguments
 then follow the prompts to enter expense information. For each expense entry,
