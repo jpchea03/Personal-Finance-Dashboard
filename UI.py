@@ -236,9 +236,3 @@ class PersonalFinanceDashboard(QWidget):
     def open_update_user_info_window(self):
         self.update_user_info_window = UpdateUserInfoWindow()
         self.update_user_info_window.show()
-
-# Main loop
-app = QApplication([])
-window = PersonalFinanceDashboard()
-window.show()
-app.exec()

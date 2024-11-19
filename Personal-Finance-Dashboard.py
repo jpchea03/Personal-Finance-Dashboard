@@ -2,6 +2,7 @@
 import csv
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit
+import UI
 
 
 # Function to save expenses to a CSV file
@@ -123,3 +124,10 @@ def get_annual_expenses():
     # Return annual expense dictionary
     return annual_expenses
 
+
+if __name__ == "__main__":
+    # Main loop
+    app = QApplication([])
+    window = UI.PersonalFinanceDashboard()
+    window.show()
+    app.exec()
