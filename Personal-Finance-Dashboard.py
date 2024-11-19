@@ -1,7 +1,8 @@
 # Imports
 import csv
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit
+
 
 # Function to save expenses to a CSV file
 def save_expenses_to_csv(expenses, filename):
@@ -122,24 +123,3 @@ def get_annual_expenses():
     # Return annual expense dictionary
     return annual_expenses
 
-class MainWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle("Home")
-        self.setGeometry(400, 400, 1000, 600)
-
-        l1 = QLabel("Personal Finance Dashboard")
-
-        layout = QVBoxLayout()
-        layout.addWidget(l1)
-        self.setLayout(layout)
-
-        self.show()
-
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    sys.exit(app.exec())
