@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
     QWidget, QLineEdit, QListWidget, QFormLayout, QMessageBox
 )
 
+# Window for updating expenses
 class ExpenseWindow(QWidget):
     def __init__(self, title):
         super().__init__()
@@ -68,6 +69,7 @@ class ExpenseWindow(QWidget):
         self.setWindowTitle(f"Add {title} Expenses")
         self.setGeometry(200, 200, 500, 300)
 
+    # Function to add an expense to list
     def add_expense(self):
         """Add a new expense to the list and internal dictionary."""
         expense_name = self.expense_name_input.text()
@@ -91,12 +93,14 @@ class ExpenseWindow(QWidget):
         self.amount_input.clear()
         self.save_expenses_to_csv()
 
+    # Function to fill the list with expenses
     def populate_expense_list(self):
         """Populate the list widget with existing expenses."""
         self.expenses_list.clear()
         for name, amount in self.expenses.items():
             self.expenses_list.addItem(f"{name}: ${amount:.2f}")
 
+    # Function to save expenses to appropriate csv file
     def save_expenses_to_csv(self):
         """Save the expenses to the CSV file."""
         try:
@@ -108,6 +112,7 @@ class ExpenseWindow(QWidget):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to save expenses: {e}")
 
+    # Function to delete an expense from list and csv
     def delete_selected_expense(self):
         """Delete the selected expense from the list and CSV."""
         selected_item = self.expenses_list.currentItem()
@@ -128,6 +133,7 @@ class ExpenseWindow(QWidget):
         else:
             QMessageBox.warning(self, "Selection Error", "No expense selected for deletion.")
 
+# Window to load and view expense visualizations
 class VisualizationMenuWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -157,6 +163,7 @@ class VisualizationMenuWindow(QWidget):
         self.setWindowTitle("Visualization Menu")
         self.setGeometry(250, 250, 300, 200)
 
+    # Function to load expenses from the csv
     def load_expenses_from_csv(self, filename):
         """Helper function to load expenses from a CSV file."""
         expenses = {}
@@ -173,7 +180,7 @@ class VisualizationMenuWindow(QWidget):
             print(f"Invalid data format in {filename}. Skipping malformed rows.")
         return expenses
 
-    
+    # Function to show the weekly expenses chart
     def show_weekly_expenses_chart(self):
         """Show a bar chart for weekly expenses."""
         weekly_expenses = self.load_expenses_from_csv("weekly_expenses.csv")
@@ -188,7 +195,7 @@ class VisualizationMenuWindow(QWidget):
         plt.tight_layout()
         plt.show()
 
-
+    # Function to show the monthly expenses chart
     def show_monthly_expenses_chart(self):
         """Show a bar chart for monthly expenses."""
         monthly_expenses = self.load_expenses_from_csv("monthly_expenses.csv")
@@ -203,6 +210,7 @@ class VisualizationMenuWindow(QWidget):
         plt.tight_layout()
         plt.show()
 
+    # Function to show the yearly expenses chart
     def show_yearly_expenses_chart(self):
         """Show a bar chart for yearly expenses."""
         yearly_expenses = self.load_expenses_from_csv("annual_expenses.csv")
@@ -217,6 +225,7 @@ class VisualizationMenuWindow(QWidget):
         plt.tight_layout()
         plt.show()
 
+# Window to update the users info
 class UpdateUserInfoWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -271,6 +280,7 @@ class UpdateUserInfoWindow(QWidget):
         print(f"Current Funds: {current_funds}")
         print(f"State: {state}")
 
+# Main application window
 class PersonalFinanceDashboard(QWidget):
     def __init__(self):
         super().__init__()
@@ -368,7 +378,9 @@ class PersonalFinanceDashboard(QWidget):
 
 # Function to load expenses from a CSV file
 def load_expenses_from_csv(filename):
+    # Define expenses dictionary
     expenses = {"weekly": {}, "monthly": {}, "annual": {}}
+    # Try to open csv
     try:
         with open(filename, mode='r') as file:
             reader = csv.reader(file)
@@ -376,7 +388,7 @@ def load_expenses_from_csv(filename):
             for row in reader:
                 expense_type, name, amount = row
                 expenses[expense_type][name] = float(amount)
-    except FileNotFoundError:
+    except FileNotFoundError: # If csv not found, return the empty expenses dictionary
         print(f"{filename} not found. Returning empty expenses.")
     return expenses
 
