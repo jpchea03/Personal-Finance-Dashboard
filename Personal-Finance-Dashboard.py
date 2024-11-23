@@ -165,7 +165,6 @@ class VisualizationMenuWindow(QWidget):
                 reader = csv.reader(file)
                 next(reader)  # Skip header
                 for row in reader:
-                    # Unpack only the Name and Amount columns
                     _, name, amount = row  # Ignore the first column (Expense Type)
                     expenses[name] = float(amount)
         except FileNotFoundError:
@@ -283,7 +282,6 @@ class PersonalFinanceDashboard(QWidget):
         # Create and show the VisualizationMenuWindow
         self.visualization_menu_window = VisualizationMenuWindow()
         self.visualization_menu_window.show()
-
 
 class UpdateUserInfoWindow(QWidget):
     def __init__(self):
