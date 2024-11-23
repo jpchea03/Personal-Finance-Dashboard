@@ -1,5 +1,6 @@
 # Imports
 import csv
+import matplotlib.pyplot as plt
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout,
     QWidget, QLineEdit, QListWidget, QFormLayout, QMessageBox
@@ -127,8 +128,6 @@ class ExpenseWindow(QWidget):
         else:
             QMessageBox.warning(self, "Selection Error", "No expense selected for deletion.")
 
-
-
 class VisualizationMenuWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -141,21 +140,150 @@ class VisualizationMenuWindow(QWidget):
         header_label.setStyleSheet("font-size: 18px; font-weight: bold;")
         layout.addWidget(header_label)
 
-        # Placeholder buttons for visualizations
-        visualization1_btn = QPushButton("Visualization 1")
-        visualization2_btn = QPushButton("Visualization 2")
-        visualization3_btn = QPushButton("Visualization 3")
-        visualization4_btn = QPushButton("Visualization 4")
+        # Buttons for visualizations
+        weekly_vis_btn = QPushButton("Weekly Expenses")
+        weekly_vis_btn.clicked.connect(self.show_weekly_expenses_chart)
+        layout.addWidget(weekly_vis_btn)
 
-        # Add buttons to the layout
-        layout.addWidget(visualization1_btn)
-        layout.addWidget(visualization2_btn)
-        layout.addWidget(visualization3_btn)
-        layout.addWidget(visualization4_btn)
+        monthly_vis_btn = QPushButton("Monthly Expenses")
+        monthly_vis_btn.clicked.connect(self.show_monthly_expenses_chart)
+        layout.addWidget(monthly_vis_btn)
+
+        yearly_vis_btn = QPushButton("Yearly Expenses")
+        yearly_vis_btn.clicked.connect(self.show_yearly_expenses_chart)
+        layout.addWidget(yearly_vis_btn)
 
         self.setLayout(layout)
         self.setWindowTitle("Visualization Menu")
         self.setGeometry(250, 250, 300, 200)
+
+    def load_expenses_from_csv(self, filename):
+        """Helper function to load expenses from a CSV file."""
+        expenses = {}
+        try:
+            with open(filename, mode='r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip header
+                for row in reader:
+                    # Unpack only the Name and Amount columns
+                    _, name, amount = row  # Ignore the first column (Expense Type)
+                    expenses[name] = float(amount)
+        except FileNotFoundError:
+            print(f"{filename} not found. Returning empty data.")
+        except ValueError:
+            print(f"Invalid data format in {filename}. Skipping malformed rows.")
+        return expenses
+
+    
+    def show_weekly_expenses_chart(self):
+        """Show a bar chart for weekly expenses."""
+        weekly_expenses = self.load_expenses_from_csv("weekly_expenses.csv")
+        names = list(weekly_expenses.keys())
+        amounts = list(weekly_expenses.values())
+
+        plt.bar(names, amounts, color="skyblue")
+        plt.title("Weekly Expenses")
+        plt.xlabel("Expense Name")
+        plt.ylabel("Amount ($)")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+
+    def show_monthly_expenses_chart(self):
+        """Show a bar chart for monthly expenses."""
+        monthly_expenses = self.load_expenses_from_csv("monthly_expenses.csv")
+        names = list(monthly_expenses.keys())
+        amounts = list(monthly_expenses.values())
+
+        plt.bar(names, amounts, color="lightgreen")
+        plt.title("Monthly Expenses")
+        plt.xlabel("Expense Name")
+        plt.ylabel("Amount ($)")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+    def show_yearly_expenses_chart(self):
+        """Show a bar chart for yearly expenses."""
+        yearly_expenses = self.load_expenses_from_csv("annual_expenses.csv")
+        names = list(yearly_expenses.keys())
+        amounts = list(yearly_expenses.values())
+
+        plt.bar(names, amounts, color="orange")
+        plt.title("Yearly Expenses")
+        plt.xlabel("Expense Name")
+        plt.ylabel("Amount ($)")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+class PersonalFinanceDashboard(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        # Main layout
+        main_layout = QVBoxLayout()
+
+        # Header label
+        header_label = QLabel("Personal Finance Dashboard")
+        header_label.setStyleSheet("font-size: 24px; font-weight: bold; text-decoration: underline;")
+        main_layout.addWidget(header_label)
+
+        # Horizontal layout for user info and functions
+        horizontal_layout = QHBoxLayout()
+
+        # Functions layout
+        functions_layout = QVBoxLayout()
+        functions_label = QLabel("Functions")
+        functions_label.setStyleSheet("font-size: 18px; font-weight: bold;")
+        functions_layout.addWidget(functions_label)
+
+        # Add Weekly Expenses button
+        add_weekly_expenses_btn = QPushButton("Add Weekly Expenses")
+        add_weekly_expenses_btn.clicked.connect(self.open_weekly_expenses_window)
+        functions_layout.addWidget(add_weekly_expenses_btn)
+
+        # Add Monthly Expenses button
+        add_monthly_expenses_btn = QPushButton("Add Monthly Expenses")
+        add_monthly_expenses_btn.clicked.connect(self.open_monthly_expenses_window)
+        functions_layout.addWidget(add_monthly_expenses_btn)
+
+        # Add Annual Expenses button
+        add_annual_expenses_btn = QPushButton("Add Annual Expenses")
+        add_annual_expenses_btn.clicked.connect(self.open_annual_expenses_window)
+        functions_layout.addWidget(add_annual_expenses_btn)
+
+        # Visualization button
+        visualization_btn = QPushButton("Visualization")
+        visualization_btn.clicked.connect(self.open_visualization_menu)
+        functions_layout.addWidget(visualization_btn)
+
+        horizontal_layout.addLayout(functions_layout)
+        main_layout.addLayout(horizontal_layout)
+        self.setLayout(main_layout)
+
+        # Window settings
+        self.setWindowTitle("Personal Finance Dashboard")
+        self.setGeometry(100, 100, 600, 400)
+
+    def open_weekly_expenses_window(self):
+        self.weekly_expenses_window = ExpenseWindow("Weekly")
+        self.weekly_expenses_window.show()
+
+    def open_monthly_expenses_window(self):
+        self.monthly_expenses_window = ExpenseWindow("Monthly")
+        self.monthly_expenses_window.show()
+
+    def open_annual_expenses_window(self):
+        self.annual_expenses_window = ExpenseWindow("Annual")
+        self.annual_expenses_window.show()
+
+    def open_visualization_menu(self):
+        # Create and show the VisualizationMenuWindow
+        self.visualization_menu_window = VisualizationMenuWindow()
+        self.visualization_menu_window.show()
+
 
 class UpdateUserInfoWindow(QWidget):
     def __init__(self):
