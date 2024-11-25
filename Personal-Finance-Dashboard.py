@@ -51,10 +51,6 @@ class ExpenseWindow(QWidget):
 
         # Buttons for managing expenses
         manage_expenses_layout = QHBoxLayout()
-        
-        save_expenses_btn = QPushButton("Save Expenses to CSV")
-        save_expenses_btn.clicked.connect(self.save_expenses_to_csv)
-        manage_expenses_layout.addWidget(save_expenses_btn)
 
         delete_expense_btn = QPushButton("Delete Selected Expense")
         delete_expense_btn.clicked.connect(self.delete_selected_expense)
@@ -173,7 +169,7 @@ class VisualizationMenuWindow(QWidget):
                 reader = csv.reader(file)
                 next(reader)  # Skip header
                 for row in reader:
-                    _, name, amount = row  # Ignore the first column (Expense Type)
+                    _, name, amount = row  # Ignore first column (Expense Type)
                     expenses[name] = float(amount)
         except FileNotFoundError:
             print(f"{filename} not found. Returning empty data.")
@@ -228,7 +224,7 @@ class VisualizationMenuWindow(QWidget):
 
 # Window to update the users info
 class UpdateUserInfoWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, current_data=None):
         super().__init__(parent)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.Window)
         print("UpdateUserInfoWindow initialized")  # Debugging lin
@@ -245,10 +241,10 @@ class UpdateUserInfoWindow(QWidget):
         form_layout = QFormLayout()
 
         # Fields for user information
-        self.name_input = QLineEdit()
-        self.annual_income_input = QLineEdit()
-        self.current_funds_input = QLineEdit()
-        self.state_input = QLineEdit()
+        self.name_input = QLineEdit(current_data.get("name", "") if current_data else "")
+        self.annual_income_input = QLineEdit(current_data.get("income", "") if current_data else "")
+        self.current_funds_input = QLineEdit(current_data.get("funds", "") if current_data else "")
+        self.state_input = QLineEdit(current_data.get("state", "") if current_data else "")
 
         # Adding fields to the form
         form_layout.addRow("Name:", self.name_input)
@@ -294,9 +290,9 @@ class UpdateUserInfoWindow(QWidget):
             parent = self.parent()
             if parent and hasattr(parent, 'load_and_display_user_info'):
                 print(f"Parent has attribute load_and_display_user_info")
-                parent.load_and_display_user_info()  # Call method to refresh labels
+                parent.load_and_display_user_info()
 
-            self.close()  # Close the update window after saving
+            self.close()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to update user info: {e}")
 
@@ -323,10 +319,10 @@ class PersonalFinanceDashboard(QWidget):
         user_info_layout.addWidget(user_info_label)
 
         # Adding labels for User Info
-        self.name_label = QLabel("Name: N/A")  # Expose as attribute
-        self.income_label = QLabel("Annual Income: N/A")  # Expose as attribute
-        self.funds_label = QLabel("Current Funds: N/A")  # Expose as attribute
-        self.state_label = QLabel("State: N/A")  # Expose as attribute
+        self.name_label = QLabel("Name: N/A")
+        self.income_label = QLabel("Annual Income: N/A") 
+        self.funds_label = QLabel("Current Funds: N/A")
+        self.state_label = QLabel("State: N/A")
 
         user_info_layout.addWidget(self.name_label)
         user_info_layout.addWidget(self.income_label)
@@ -399,13 +395,21 @@ class PersonalFinanceDashboard(QWidget):
         self.visualization_menu_window.show()
 
     def open_update_user_info_window(self):
-        self.update_user_info_window = UpdateUserInfoWindow(self)
+        # Gather current user info from labels
+        current_data = {
+            "name": self.name_label.text().replace("Name: ", ""),
+            "income": self.income_label.text().replace("Annual Income: ", ""),
+            "funds": self.funds_label.text().replace("Current Funds: ", ""),
+            "state": self.state_label.text().replace("State: ", ""),
+        }
+
+        self.update_user_info_window = UpdateUserInfoWindow(self, current_data=current_data)
         self.update_user_info_window.setGeometry(500, 200, 400, 250)
         self.update_user_info_window.show()
 
     # Function to load and display user info
     def load_and_display_user_info(self):
-        user_info = load_user_info()  # Load updated data from CSV
+        user_info = load_user_info()
         self.name_label.setText(f"Name: {user_info['name']}")
         self.income_label.setText(f"Annual Income: {user_info['income']}")
         self.funds_label.setText(f"Current Funds: {user_info['funds']}")
@@ -424,7 +428,7 @@ def load_expenses_from_csv(filename):
             for row in reader:
                 expense_type, name, amount = row
                 expenses[expense_type][name] = float(amount)
-    except FileNotFoundError: # If csv not found, return the empty expenses dictionary
+    except FileNotFoundError: # If csv not found, return empty expenses dictionary
         print(f"{filename} not found. Returning empty expenses.")
     return expenses
 
