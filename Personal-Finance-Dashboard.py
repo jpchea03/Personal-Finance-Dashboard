@@ -266,19 +266,33 @@ class UpdateUserInfoWindow(QWidget):
         self.setWindowTitle("Update User Info")
         self.setGeometry(300, 300, 400, 250)
 
+    # Function to save user information to CSV
     def save_user_info(self):
-        # Collect the data from input fields
+        # Collect data from input fields
         name = self.name_input.text()
         annual_income = self.annual_income_input.text()
         current_funds = self.current_funds_input.text()
         state = self.state_input.text()
 
-        # Placeholder functionality for saving data
-        print("User Info Updated:")
-        print(f"Name: {name}")
-        print(f"Annual Income: {annual_income}")
-        print(f"Current Funds: {current_funds}")
-        print(f"State: {state}")
+        # Ensure all fields complete
+        if not all([name, annual_income, current_funds, state]):
+            QMessageBox.warning(self, "Input Error", "All fields must be filled!")
+            return
+
+        # Write user info to CSV
+        try:
+            with open("user_info.csv", mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["Name", "Annual Income", "Current Funds", "State"])
+                writer.writerow([name, annual_income, current_funds, state])
+            QMessageBox.information(self, "User Info Updated", "User info updated successfully!")
+            # Notify the main window to reload user info
+            parent = self.parent()
+            if parent and hasattr(parent, 'load_and_display_user_info'):
+                parent.load_and_display_user_info()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to update user info: {e}")
 
 # Main application window
 class PersonalFinanceDashboard(QWidget):
@@ -376,6 +390,14 @@ class PersonalFinanceDashboard(QWidget):
         self.update_user_info_window = UpdateUserInfoWindow()
         self.update_user_info_window.show()
 
+    # Function to load and display user info
+    def load_and_display_user_info(self):
+        user_info = load_user_info()
+        self.name_label.setText(f"Name: {user_info['name']}")
+        self.income_label.setText(f"Annual Income: {user_info['income']}")
+        self.funds_label.setText(f"Current Funds: {user_info['funds']}")
+        self.state_label.setText(f"State: {user_info['state']}")
+
 # Function to load expenses from a CSV file
 def load_expenses_from_csv(filename):
     # Define expenses dictionary
@@ -391,6 +413,21 @@ def load_expenses_from_csv(filename):
     except FileNotFoundError: # If csv not found, return the empty expenses dictionary
         print(f"{filename} not found. Returning empty expenses.")
     return expenses
+
+# Function to load user information from CSV
+def load_user_info():
+    try:
+        with open("user_info.csv", mode='r') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header
+            for row in reader:
+                return {"name": row[0], "income": row[1], "funds": row[2], "state": row[3]}
+    except FileNotFoundError:
+        print("user_info.csv not found. Returning default user info.")
+        return {"name": "N/A", "income": "N/A", "funds": "N/A", "state": "N/A"}
+    except Exception as e:
+        print(f"Error loading user info: {e}")
+        return {"name": "Error", "income": "Error", "funds": "Error", "state": "Error"}
 
 if __name__ == "__main__":
     app = QApplication([])
