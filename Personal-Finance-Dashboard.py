@@ -1,6 +1,7 @@
 # Imports
 import csv
 import matplotlib.pyplot as plt
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout,
     QWidget, QLineEdit, QListWidget, QFormLayout, QMessageBox
@@ -229,6 +230,7 @@ class VisualizationMenuWindow(QWidget):
 class UpdateUserInfoWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.Window)
         print("UpdateUserInfoWindow initialized")  # Debugging lin
 
         # Main layout for the window
@@ -376,6 +378,9 @@ class PersonalFinanceDashboard(QWidget):
         # Window settings
         self.setWindowTitle("Personal Finance Dashboard")
         self.setGeometry(100, 100, 600, 400)
+
+        # Load and display user info on startup
+        self.load_and_display_user_info()
 
     def open_weekly_expenses_window(self):
         self.weekly_expenses_window = ExpenseWindow("Weekly")
