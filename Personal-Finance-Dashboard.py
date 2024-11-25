@@ -227,8 +227,9 @@ class VisualizationMenuWindow(QWidget):
 
 # Window to update the users info
 class UpdateUserInfoWindow(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        print("UpdateUserInfoWindow initialized")  # Debugging lin
 
         # Main layout for the window
         layout = QVBoxLayout()
@@ -266,7 +267,6 @@ class UpdateUserInfoWindow(QWidget):
         self.setWindowTitle("Update User Info")
         self.setGeometry(300, 300, 400, 250)
 
-    # Function to save user information to CSV
     def save_user_info(self):
         # Collect data from input fields
         name = self.name_input.text()
@@ -290,7 +290,7 @@ class UpdateUserInfoWindow(QWidget):
             parent = self.parent()
             if parent and hasattr(parent, 'load_and_display_user_info'):
                 parent.load_and_display_user_info()
-
+            self.close()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to update user info: {e}")
 
@@ -317,10 +317,15 @@ class PersonalFinanceDashboard(QWidget):
         user_info_layout.addWidget(user_info_label)
 
         # Adding labels for User Info
-        user_info_layout.addWidget(QLabel("Name: "))
-        user_info_layout.addWidget(QLabel("Annual Income: "))
-        user_info_layout.addWidget(QLabel("Current Funds: "))
-        user_info_layout.addWidget(QLabel("State: "))
+        self.name_label = QLabel("Name: N/A")  # Expose as attribute
+        self.income_label = QLabel("Annual Income: N/A")  # Expose as attribute
+        self.funds_label = QLabel("Current Funds: N/A")  # Expose as attribute
+        self.state_label = QLabel("State: N/A")  # Expose as attribute
+
+        user_info_layout.addWidget(self.name_label)
+        user_info_layout.addWidget(self.income_label)
+        user_info_layout.addWidget(self.funds_label)
+        user_info_layout.addWidget(self.state_label)
 
         # Functions layout
         functions_layout = QVBoxLayout()
@@ -380,7 +385,6 @@ class PersonalFinanceDashboard(QWidget):
         self.annual_expenses_window = ExpenseWindow("Annual")
         self.annual_expenses_window.show()
 
-
     def open_visualization_menu(self):
         # Create and show the VisualizationMenuWindow
         self.visualization_menu_window = VisualizationMenuWindow()
@@ -388,6 +392,7 @@ class PersonalFinanceDashboard(QWidget):
 
     def open_update_user_info_window(self):
         self.update_user_info_window = UpdateUserInfoWindow()
+        self.update_user_info_window.setGeometry(500, 200, 400, 250)
         self.update_user_info_window.show()
 
     # Function to load and display user info
