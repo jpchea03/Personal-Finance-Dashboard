@@ -274,7 +274,7 @@ class UpdateUserInfoWindow(QWidget):
         current_funds = self.current_funds_input.text()
         state = self.state_input.text()
 
-        # Ensure all fields complete
+        # Ensure all fields are complete
         if not all([name, annual_income, current_funds, state]):
             QMessageBox.warning(self, "Input Error", "All fields must be filled!")
             return
@@ -285,12 +285,16 @@ class UpdateUserInfoWindow(QWidget):
                 writer = csv.writer(file)
                 writer.writerow(["Name", "Annual Income", "Current Funds", "State"])
                 writer.writerow([name, annual_income, current_funds, state])
+
             QMessageBox.information(self, "User Info Updated", "User info updated successfully!")
-            # Notify the main window to reload user info
+
+            # Notify the parent (main window) to reload and update user info
             parent = self.parent()
             if parent and hasattr(parent, 'load_and_display_user_info'):
-                parent.load_and_display_user_info()
-            self.close()
+                print(f"Parent has attribute load_and_display_user_info")
+                parent.load_and_display_user_info()  # Call method to refresh labels
+
+            self.close()  # Close the update window after saving
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to update user info: {e}")
 
@@ -386,22 +390,22 @@ class PersonalFinanceDashboard(QWidget):
         self.annual_expenses_window.show()
 
     def open_visualization_menu(self):
-        # Create and show the VisualizationMenuWindow
         self.visualization_menu_window = VisualizationMenuWindow()
         self.visualization_menu_window.show()
 
     def open_update_user_info_window(self):
-        self.update_user_info_window = UpdateUserInfoWindow()
+        self.update_user_info_window = UpdateUserInfoWindow(self)
         self.update_user_info_window.setGeometry(500, 200, 400, 250)
         self.update_user_info_window.show()
 
     # Function to load and display user info
     def load_and_display_user_info(self):
-        user_info = load_user_info()
+        user_info = load_user_info()  # Load updated data from CSV
         self.name_label.setText(f"Name: {user_info['name']}")
         self.income_label.setText(f"Annual Income: {user_info['income']}")
         self.funds_label.setText(f"Current Funds: {user_info['funds']}")
         self.state_label.setText(f"State: {user_info['state']}")
+
 
 # Function to load expenses from a CSV file
 def load_expenses_from_csv(filename):
