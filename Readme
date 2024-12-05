@@ -1,6 +1,6 @@
 --Personal Finance Dashboard--
 The Personal Finance Dashboard is an interactive tool used to
-track expenses and make budget recommendations.
+track expenses and create budget visualizations.
 
 Contributors:
 Joseph Cheatham
@@ -8,13 +8,16 @@ Hadey Chaker
 Emilio Spano
 
 Dependencies:
-PyQT6
+PyQT6 (must install using pip)
+MatPlotLib
 
-User Input:
-To use the user input functions, simply call them with no arguments
-then follow the prompts to enter expense information. For each expense entry,
-the program prompts the user first for the name and then for the amount.
-If the expense amount is valid, the expense is saved to a dictionary where
-the keys are the expense names and the values are the amounts. If the amount is invalid,
-an error message is displayed. In any case, after expense is entered, the user is asked if they
-wish to continue. To stop adding expenses, enter the escape code ('n') at this stage.
+Instructions:
+  1. Adding / Updating user information: To add or update the user information, navigate to the main window then click the 
+     Update User Info button. This will open the Update User Info window. Enter your information into the fields, then click
+     save. The updated information should now appear on the main window. 
+  2. Adding / Updating Expenses: To add or modify the expenses for a given time period (weekly, monthly, annual), navigate to the 
+     main window, then click the button corresponding to the time period you wish to update. Enter the expense information into
+     the fields then click add expense. To delete an expense, select it from the list and click Delete Selected Expense.
+  3. Viewing Visualizations: To view a visualization, click the Visualization button. This will load a menu that will give you the
+     option to pick which time period you wish to see the visualization for. Selecting one will load a bar graph depicting the proportion
+     of all expenses. 
